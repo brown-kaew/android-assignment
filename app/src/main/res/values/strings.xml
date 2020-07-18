@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">CoinRanking</string>
+    <string name="loading">Loading</string>
 </resources>

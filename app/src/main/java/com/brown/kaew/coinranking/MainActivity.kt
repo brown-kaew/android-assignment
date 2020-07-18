@@ -1,8 +1,9 @@
 package com.brown.kaew.coinranking
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import com.brown.kaew.coinranking.ui.main.MainFragment
+import com.bumptech.glide.Glide
 
 class MainActivity : AppCompatActivity() {
 
