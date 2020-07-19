@@ -10,15 +10,12 @@ class CoinRankingRepository(private val service: CoinRankingService) {
     // keep the list of all results received
     private val inMemoryCache = mutableListOf<Coin>()
 
-    suspend fun loadCoins() {
-//        inMemoryCache.clear()
-        inMemoryCache.addAll(service.getCoins().data.coins)
-        Log.d(this.javaClass.name,"load coin size ${inMemoryCache.size}")
+    suspend fun getCoinsByRange(offset: Int, limit: Int): List<Coin> {
+        inMemoryCache.addAll(service.getCoinsByRange(offset, limit).data.coins)
+        return inMemoryCache
     }
 
-    fun getAllCoins(): LiveData<List<Coin>> {
-        val list:LiveData<List<Coin>> = MutableLiveData(inMemoryCache)
-        Log.d(this.javaClass.name,"get Live Data list of coins")
-        return list
+    suspend fun getAllCoins(): List<Coin> {
+        return service.getCoins().data.coins
     }
 }

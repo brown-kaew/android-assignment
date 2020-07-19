@@ -50,7 +50,7 @@ class CoinViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         if (!url.isNullOrBlank()) {
 
             if (url.endsWith(".svg", true)) {
-                Log.d(javaClass.simpleName, "SVG image")
+//                Log.d(javaClass.simpleName, "SVG image")
                 imgIcon.scaleType = ImageView.ScaleType.FIT_XY
                 GlideApp.with(context.applicationContext)
                     .`as`(PictureDrawable::class.java)
@@ -61,7 +61,7 @@ class CoinViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                     .load(uri)
                     .into(imgIcon)
             } else {
-                Log.d(javaClass.simpleName, "Raster image")
+//                Log.d(javaClass.simpleName, "Raster image")
                 Glide.with(context.applicationContext)
                     .load(uri)
 //                    .placeholder(R.drawable.image_loading)

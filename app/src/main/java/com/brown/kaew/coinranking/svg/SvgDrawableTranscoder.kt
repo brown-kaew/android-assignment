@@ -17,11 +17,8 @@ class SvgDrawableTranscoder(context: Context) : ResourceTranscoder<SVG, PictureD
         toTranscode: Resource<SVG?>,
         options: Options
     ): Resource<PictureDrawable>? {
-
         val svg = toTranscode.get()
         val picture = svg.renderToPicture()
-        Log.d(javaClass.simpleName,"toTranscode= $picture")
-
         val drawable = PictureDrawable(picture)
         return SimpleResource(drawable)
     }
