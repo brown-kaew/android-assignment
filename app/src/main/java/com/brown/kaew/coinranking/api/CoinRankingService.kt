@@ -17,6 +17,12 @@ interface CoinRankingService {
         @Query("limit") limit: Int
     ): CoinRankingSearchResponse
 
+    @GET("/v1/public/coins")
+    suspend fun searchCoinWithFilter(
+        @Query("prefix") filter: String
+    ): CoinRankingSearchResponse
+
+
     companion object {
         private const val BASE_URL = "https://api.coinranking.com/"
 

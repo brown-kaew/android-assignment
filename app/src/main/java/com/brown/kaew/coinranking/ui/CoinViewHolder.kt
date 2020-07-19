@@ -45,9 +45,9 @@ class CoinViewHolder(view: View) : RecyclerView.ViewHolder(view) {
             description.text = coin.description
         }
         val url = coin.iconUrl
-        val uri = Uri.parse(url)
 
         if (!url.isNullOrBlank()) {
+            val uri = Uri.parse(url)
 
             if (url.endsWith(".svg", true)) {
 //                Log.d(javaClass.simpleName, "SVG image")

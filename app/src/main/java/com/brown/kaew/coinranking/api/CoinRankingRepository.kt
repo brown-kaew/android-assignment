@@ -15,7 +15,13 @@ class CoinRankingRepository(private val service: CoinRankingService) {
         return inMemoryCache
     }
 
+    suspend fun searchCoinWithFilter(filter: String): List<Coin> {
+        clearInMemoryCache()
+        return service.searchCoinWithFilter(filter).data.coins
+    }
+
     suspend fun getAllCoins(): List<Coin> {
+        clearInMemoryCache()
         return service.getCoins().data.coins
     }
 
