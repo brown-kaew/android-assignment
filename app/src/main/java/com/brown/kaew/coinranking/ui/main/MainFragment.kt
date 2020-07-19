@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.OnScrollListener
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.brown.kaew.coinranking.Injector
 import com.brown.kaew.coinranking.R
 import com.brown.kaew.coinranking.api.CoinRankingSearchResponse
@@ -30,6 +31,7 @@ class MainFragment : Fragment() {
     private lateinit var viewModel: MainViewModel
 
     private lateinit var list: RecyclerView
+    private lateinit var swipeContainer: SwipeRefreshLayout
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,7 +39,7 @@ class MainFragment : Fragment() {
     ): View {
         val view = inflater.inflate(R.layout.main_fragment, container, false)
         list = view.findViewById(R.id.list)
-
+        swipeContainer = view.findViewById(R.id.swipeContainer)
         return view
     }
 
@@ -64,6 +66,14 @@ class MainFragment : Fragment() {
         viewModel.firstLoadCoins()
         subscribeUI(adapter)
 
+        setupPullToRequest()
+
+    }
+
+    private fun setupPullToRequest() {
+        swipeContainer.setOnRefreshListener {
+            viewModel.refresh()
+        }
     }
 
     private fun subscribeUI(adapter: CoinAdapter) {
@@ -73,13 +83,14 @@ class MainFragment : Fragment() {
                     Log.d(TAG, "list size: ${list.size}")
                     adapter.submitList(list)
                     adapter.notifyDataSetChanged()
+                    swipeContainer.isRefreshing = false;
                 })
     }
 
     private fun setupScrollListener() {
         val layoutManager = list.layoutManager as LinearLayoutManager
 
-        list.addOnScrollListener(object : OnScrollListener(){
+        list.addOnScrollListener(object : OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val totalItemCount = layoutManager.itemCount

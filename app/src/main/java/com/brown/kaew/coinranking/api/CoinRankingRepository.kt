@@ -18,4 +18,9 @@ class CoinRankingRepository(private val service: CoinRankingService) {
     suspend fun getAllCoins(): List<Coin> {
         return service.getCoins().data.coins
     }
+
+    fun clearInMemoryCache(): List<Coin> {
+        inMemoryCache.clear()
+        return inMemoryCache
+    }
 }

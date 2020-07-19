@@ -27,6 +27,12 @@ class MainViewModel(private val repository: CoinRankingRepository) : ViewModel()
         }
     }
 
+    fun refresh() {
+        _offset = 0
+        _coins.postValue(repository.clearInMemoryCache())
+        firstLoadCoins()
+    }
+
     fun firstLoadCoins() {
         getMoreCoins(_limit*2)
     }
