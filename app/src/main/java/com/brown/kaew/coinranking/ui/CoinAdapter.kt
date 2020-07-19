@@ -8,6 +8,7 @@ import com.brown.kaew.coinranking.data.Coin
 class CoinAdapter : ListAdapter<Coin, CoinViewHolder>(COIN_COMPARATOR) {
 
     companion object {
+
         private val COIN_COMPARATOR = object : DiffUtil.ItemCallback<Coin>() {
             override fun areItemsTheSame(oldItem: Coin, newItem: Coin): Boolean =
                 oldItem.id == newItem.id
@@ -18,7 +19,7 @@ class CoinAdapter : ListAdapter<Coin, CoinViewHolder>(COIN_COMPARATOR) {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CoinViewHolder {
-       return CoinViewHolder.create(parent)
+        return CoinViewHolder.create(parent, viewType)
     }
 
     override fun onBindViewHolder(holder: CoinViewHolder, position: Int) {
@@ -26,5 +27,13 @@ class CoinAdapter : ListAdapter<Coin, CoinViewHolder>(COIN_COMPARATOR) {
         if (item != null) {
             holder.bind(item)
         }
+    }
+
+    override fun getItemViewType(position: Int): Int {
+        return when {
+            position % 5 == 4 -> CoinViewHolder.Type.SPECIAL.ordinal
+            else -> CoinViewHolder.Type.NORMAL.ordinal
+        }
+
     }
 }

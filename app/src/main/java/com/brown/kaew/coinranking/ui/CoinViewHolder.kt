@@ -14,20 +14,20 @@ import com.brown.kaew.coinranking.data.Coin
 import com.brown.kaew.coinranking.svg.GlideApp
 import com.brown.kaew.coinranking.svg.SvgSoftwareLayerSetter
 import com.bumptech.glide.Glide
-import com.bumptech.glide.RequestBuilder
-import com.bumptech.glide.load.DataSource
-import com.bumptech.glide.load.engine.GlideException
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
-import com.bumptech.glide.request.RequestListener
-import com.bumptech.glide.request.target.ImageViewTarget
-import com.bumptech.glide.request.target.Target
 
 class CoinViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+
+    enum class Type {
+        NORMAL,
+        SPECIAL
+    }
 
     private val context = view.context
     private val imgIcon = view.findViewById<ImageView>(R.id.imgIcon)
     private val name = view.findViewById<TextView>(R.id.name)
     private val description = view.findViewById<TextView>(R.id.description)
+    private var viewType: Int = Type.NORMAL.ordinal
 
     fun bind(coin: Coin?) {
         if (coin == null) {
@@ -41,10 +41,10 @@ class CoinViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private fun showCoin(coin: Coin) {
         name.text = coin.name
-        description.text = coin.description
-        var url = coin.iconUrl
-        Log.d(javaClass.simpleName, "url = $url")
-//        url = "https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png"
+        if (viewType == Type.NORMAL.ordinal) {
+            description.text = coin.description
+        }
+        val url = coin.iconUrl
         val uri = Uri.parse(url)
 
         if (!url.isNullOrBlank()) {
@@ -73,37 +73,18 @@ class CoinViewHolder(view: View) : RecyclerView.ViewHolder(view) {
     }
 
     companion object {
-        fun create(parent: ViewGroup): CoinViewHolder {
+        fun create(parent: ViewGroup, viewType: Int): CoinViewHolder {
+            val layout = when (viewType) {
+                Type.NORMAL.ordinal -> R.layout.coin_view_item
+                else -> R.layout.coin_view_item_special
+            }
+
             val view = LayoutInflater.from(parent.context)
-                .inflate(R.layout.coin_view_item, parent, false)
-            return CoinViewHolder(view)
-        }
+                .inflate(layout, parent, false)
 
-        private val svgSoftwareLayerSetter = object : RequestListener<PictureDrawable> {
-            override fun onLoadFailed(
-                e: GlideException?,
-                model: Any?,
-                target: Target<PictureDrawable>?,
-                isFirstResource: Boolean
-            ): Boolean {
-                val view = (target as ImageViewTarget<*>).view
-                view.setLayerType(ImageView.LAYER_TYPE_NONE, null)
-                return false
-            }
-
-            override fun onResourceReady(
-                resource: PictureDrawable?,
-                model: Any?,
-                target: Target<PictureDrawable>?,
-                dataSource: DataSource?,
-                isFirstResource: Boolean
-            ): Boolean {
-
-                val view = (target as ImageViewTarget<*>).view
-                view.setLayerType(ImageView.LAYER_TYPE_SOFTWARE, null)
-                return false
-            }
-
+            val coinViewHolder = CoinViewHolder(view)
+            coinViewHolder.viewType = viewType
+            return coinViewHolder
         }
     }
 }

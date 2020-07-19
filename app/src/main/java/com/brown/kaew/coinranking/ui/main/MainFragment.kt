@@ -2,22 +2,18 @@ package com.brown.kaew.coinranking.ui.main
 
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.brown.kaew.coinranking.Injector
 import com.brown.kaew.coinranking.R
-import com.brown.kaew.coinranking.data.CoinRankingSearchResponse
+import com.brown.kaew.coinranking.api.CoinRankingSearchResponse
 import com.brown.kaew.coinranking.ui.CoinAdapter
 import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 import com.google.gson.stream.JsonReader
-import java.io.FileReader
 
 class MainFragment : Fragment() {
 

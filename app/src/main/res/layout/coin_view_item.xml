@@ -23,6 +23,7 @@
         android:padding="@dimen/padding_size"
         android:lines="1"
         android:textSize="@dimen/name_size"
+        android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/imgIcon"
         app:layout_constraintTop_toTopOf="parent"

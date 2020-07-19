@@ -1,6 +1,5 @@
 package com.brown.kaew.coinranking.api
 
-import com.brown.kaew.coinranking.data.CoinRankingSearchResponse
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -8,7 +7,7 @@ import retrofit2.http.GET
 interface CoinRankingService {
 
     @GET("v1/public/coins")
-    suspend fun getCoins():CoinRankingSearchResponse
+    suspend fun getCoins(): CoinRankingSearchResponse
 
     companion object {
         private const val BASE_URL = "https://api.coinranking.com/"
