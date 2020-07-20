@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.brown.kaew.coinranking.api.CoinRankingRepository
 import com.brown.kaew.coinranking.data.Coin
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val repository: CoinRankingRepository) : ViewModel() {
@@ -24,8 +23,6 @@ class MainViewModel(private val repository: CoinRankingRepository) : ViewModel()
     private var _offset = 0
     private var getMoreCoinsInProgress = false;
 
-    private var searchFilterJob: Job = Job()
-
     private val _coins = MutableLiveData<List<Coin>>()
 
     fun getCoins() = _coins
@@ -42,9 +39,8 @@ class MainViewModel(private val repository: CoinRankingRepository) : ViewModel()
             query.trim().isNotEmpty()
         ) {
             Log.d(TAG, "searchFilter $query")
-            searchFilterJob.cancel()
             _coins.postValue(repository.clearInMemoryCache())
-            searchFilterJob = viewModelScope.launch {
+            viewModelScope.launch {
                 _coins.postValue(repository.searchCoinWithFilter(query.trim()))
                 lastSearch = query
             }
@@ -80,8 +76,6 @@ class MainViewModel(private val repository: CoinRankingRepository) : ViewModel()
         if (getMoreCoinsInProgress) return
 
         getMoreCoinsInProgress = true
-        searchFilterJob.cancel()
-
         viewModelScope.launch {
             Log.d(TAG, "load more")
             _coins.postValue(repository.getCoinsByRange(_offset, limit))
