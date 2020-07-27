@@ -2,7 +2,6 @@ package com.brown.kaew.coinranking.ui
 
 import android.graphics.drawable.PictureDrawable
 import android.net.Uri
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,24 +15,16 @@ import com.brown.kaew.coinranking.svg.SvgSoftwareLayerSetter
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade
 
-class CoinViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-
-    enum class Type {
-        NORMAL,
-        SPECIAL
-    }
+class SpecialCoinViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private val context = view.context
     private val imgIcon = view.findViewById<ImageView>(R.id.imgIcon)
     private val name = view.findViewById<TextView>(R.id.name)
-    private val description = view.findViewById<TextView>(R.id.description)
-    private var viewType: Int = Type.NORMAL.ordinal
 
     fun bind(coin: Coin?) {
         if (coin == null) {
             val resources = itemView.resources
             name.text = resources.getString(R.string.loading)
-            description.text = resources.getString(R.string.loading)
         } else {
             showCoin(coin)
         }
@@ -41,9 +32,6 @@ class CoinViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
     private fun showCoin(coin: Coin) {
         name.text = coin.name
-        if (viewType == Type.NORMAL.ordinal) {
-            description.text = coin.description
-        }
         val url = coin.iconUrl
 
         if (!url.isNullOrBlank()) {
@@ -68,23 +56,17 @@ class CoinViewHolder(view: View) : RecyclerView.ViewHolder(view) {
                     .error(R.drawable.image_error)
                     .into(imgIcon)
             }
-
         }
     }
 
     companion object {
-        fun create(parent: ViewGroup, viewType: Int): CoinViewHolder {
-            val layout = when (viewType) {
-                Type.NORMAL.ordinal -> R.layout.coin_view_item
-                else -> R.layout.coin_view_item_special
-            }
+        fun create(parent: ViewGroup, viewType: Int): SpecialCoinViewHolder {
+            val layout = R.layout.special_coin_view_item
 
             val view = LayoutInflater.from(parent.context)
                 .inflate(layout, parent, false)
 
-            val coinViewHolder = CoinViewHolder(view)
-            coinViewHolder.viewType = viewType
-            return coinViewHolder
+            return SpecialCoinViewHolder(view)
         }
     }
 }

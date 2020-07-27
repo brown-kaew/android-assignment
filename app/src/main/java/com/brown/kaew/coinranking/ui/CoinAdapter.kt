@@ -1,39 +1,42 @@
 package com.brown.kaew.coinranking.ui
 
+import android.util.Log
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import com.brown.kaew.coinranking.R
 import com.brown.kaew.coinranking.data.Coin
 
-class CoinAdapter : ListAdapter<Coin, CoinViewHolder>(COIN_COMPARATOR) {
+class CoinAdapter(var coinList: List<Coin>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
-    companion object {
+    private val TAG = javaClass.simpleName
 
-        private val COIN_COMPARATOR = object : DiffUtil.ItemCallback<Coin>() {
-            override fun areItemsTheSame(oldItem: Coin, newItem: Coin): Boolean =
-                oldItem.id == newItem.id
-
-            override fun areContentsTheSame(oldItem: Coin, newItem: Coin): Boolean =
-                oldItem == newItem
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            R.layout.special_coin_view_item -> SpecialCoinViewHolder.create(parent, viewType)
+            else -> NormalCoinViewHolder.create(parent, viewType)
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CoinViewHolder {
-        return CoinViewHolder.create(parent, viewType)
+    override fun getItemCount(): Int {
+        return coinList.size
     }
 
-    override fun onBindViewHolder(holder: CoinViewHolder, position: Int) {
-        val item = getItem(position)
-        if (item != null) {
-            holder.bind(item)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        when (holder.itemViewType) {
+            R.layout.special_coin_view_item -> (holder as SpecialCoinViewHolder).bind(coinList[position])
+            else -> (holder as NormalCoinViewHolder).bind(coinList[position])
         }
     }
 
     override fun getItemViewType(position: Int): Int {
         return when {
-            position % 5 == 4 -> CoinViewHolder.Type.SPECIAL.ordinal
-            else -> CoinViewHolder.Type.NORMAL.ordinal
+            position % 5 == 4 -> R.layout.special_coin_view_item
+            else -> R.layout.normal_coin_view_item
         }
+    }
 
+    override fun onViewRecycled(holder: RecyclerView.ViewHolder) {
+        super.onViewRecycled(holder)
+        Log.d(TAG, "onViewRecycled : ${holder.itemViewType}")
     }
 }

@@ -22,7 +22,7 @@
         app:startIconDrawable="@android:drawable/ic_menu_search">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/search_filter"
+            android:id="@+id/searchFilter"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/search_hint"
@@ -45,12 +45,12 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/list"
+            android:id="@+id/recyclerView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scrollbars="vertical"
             app:layoutManager="LinearLayoutManager"
-            tools:listitem="@layout/coin_view_item" />
+            tools:listitem="@layout/normal_coin_view_item" />
 
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 

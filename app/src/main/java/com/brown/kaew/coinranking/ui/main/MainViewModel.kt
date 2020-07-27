@@ -1,6 +1,7 @@
 package com.brown.kaew.coinranking.ui.main
 
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -25,7 +26,7 @@ class MainViewModel(private val repository: CoinRankingRepository) : ViewModel()
 
     private val _coins = MutableLiveData<List<Coin>>()
 
-    fun getCoins() = _coins
+    var coins = _coins as LiveData<List<Coin>>
 
     fun loadCoins() {
         viewModelScope.launch {

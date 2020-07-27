@@ -19,6 +19,7 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.brown.kaew.coinranking.Injector
 import com.brown.kaew.coinranking.R
 import com.brown.kaew.coinranking.api.CoinRankingSearchResponse
+import com.brown.kaew.coinranking.data.Coin
 import com.brown.kaew.coinranking.ui.CoinAdapter
 import com.google.android.material.textfield.TextInputEditText
 import com.google.gson.Gson
@@ -34,18 +35,20 @@ class MainFragment : Fragment() {
 
     private lateinit var viewModel: MainViewModel
 
-    private lateinit var list: RecyclerView
+    private lateinit var recyclerView: RecyclerView
     private lateinit var swipeContainer: SwipeRefreshLayout
-    private lateinit var search_filter: TextInputEditText
+    private lateinit var searchFilter: TextInputEditText
+
+    private var coinList: List<Coin> = listOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val view = inflater.inflate(R.layout.main_fragment, container, false)
-        list = view.findViewById(R.id.list)
+        recyclerView = view.findViewById(R.id.recyclerView)
         swipeContainer = view.findViewById(R.id.swipeContainer)
-        search_filter = view.findViewById(R.id.search_filter)
+        searchFilter = view.findViewById(R.id.searchFilter)
         return view
     }
 
@@ -59,11 +62,11 @@ class MainFragment : Fragment() {
 
         // add dividers between RecyclerView's row items
         val decoration = DividerItemDecoration(context, DividerItemDecoration.VERTICAL)
-        list.addItemDecoration(decoration)
+        recyclerView.addItemDecoration(decoration)
         setupScrollListener()
 
-        val adapter = CoinAdapter()
-        list.adapter = adapter
+        val adapter = CoinAdapter(coinList)
+        recyclerView.adapter = adapter
 
         // Test UI from local data
 //        loadDataFromLocalJsonFile(adapter)
@@ -77,18 +80,18 @@ class MainFragment : Fragment() {
 
     private fun setupPullToRequest() {
         swipeContainer.setOnRefreshListener {
-            search_filter.text?.clear()
-            search_filter.clearFocus()
+            searchFilter.text?.clear()
+            searchFilter.clearFocus()
             viewModel.refresh()
         }
     }
 
     private fun subscribeUI(adapter: CoinAdapter) {
-        viewModel.getCoins()
+        viewModel.coins
             .observe(this,
                 Observer { list ->
                     Log.d(TAG, "list size: ${list.size}")
-                    adapter.submitList(list)
+                    adapter.coinList = list
                     adapter.notifyDataSetChanged()
                     swipeContainer.isRefreshing = false;
                 })
@@ -96,7 +99,7 @@ class MainFragment : Fragment() {
 
     private fun setupSearchFilter() {
 
-        search_filter.addTextChangedListener(object : TextWatcher {
+        searchFilter.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(p0: Editable?) {
                 updateCoinListFromInput()
             }
@@ -105,7 +108,7 @@ class MainFragment : Fragment() {
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
         })
 
-        search_filter.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
+        searchFilter.onFocusChangeListener = View.OnFocusChangeListener { view, hasFocus ->
             if (!hasFocus) {
                 val imm = context?.getSystemService(InputMethodManager::class.java)
                 imm?.hideSoftInputFromWindow(view!!.windowToken, 0)
@@ -114,32 +117,32 @@ class MainFragment : Fragment() {
     }
 
     private fun updateCoinListFromInput() {
-        search_filter.text.let {
+        searchFilter.text.let {
             if (it != null) {
                 if (it.isEmpty() && viewModel.state == MainViewModel.State.SEARCH) {
                     viewModel.state = MainViewModel.State.NORMAL
-                    search_filter.clearFocus()
+                    searchFilter.clearFocus()
                     viewModel.clearSearch()
                 } else if (it.trim().isNotBlank()) {
                     viewModel.state = MainViewModel.State.SEARCH
                     viewModel.searchFilter(it.trim().toString())
-                    list.scrollToPosition(0)
+                    recyclerView.scrollToPosition(0)
                 }
             }
         }
     }
 
     private fun setupScrollListener() {
-        val layoutManager = list.layoutManager as LinearLayoutManager
+        val layoutManager = recyclerView.layoutManager as LinearLayoutManager
 
-        list.addOnScrollListener(object : OnScrollListener() {
+        recyclerView.addOnScrollListener(object : OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
                 val totalItemCount = layoutManager.itemCount
                 val visibleItemCount = layoutManager.childCount
                 val lastVisibleItem = layoutManager.findLastVisibleItemPosition()
 
-                if (search_filter.text.isNullOrEmpty() &&
+                if (searchFilter.text.isNullOrEmpty() &&
                     viewModel.state == MainViewModel.State.NORMAL
                 ) {
                     viewModel.listScrolled(visibleItemCount, lastVisibleItem, totalItemCount)
@@ -155,7 +158,7 @@ class MainFragment : Fragment() {
                     jsonReader,
                     CoinRankingSearchResponse::class.java
                 )
-                adapter.submitList(res.data.coins)
+                adapter.coinList = res.data.coins
             }
         }
     }
